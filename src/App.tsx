@@ -2,55 +2,27 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Calculator from "./Calculator";
 
-let stopLoss = 0;
-let takeProfit = 0;
-let profit = 0;
-let loss = 0;
+// let stopLoss, takeProfit, profit, loss;
 const lossThreshold = 0.01;
 const profitThreshold = 0.03;
 
 function App() {
   const [buyPrice, setBuyPrice] = useState(0);
   const [orderType, setOrderType] = useState("buy");
-  const [isUpdated, setIsUpdated] = useState(false);
+
+  // let stopLoss, takeProfit, profit, loss;
 
   useEffect(() => {
     setBuyPrice(0);
     setOrderType("buy");
-    stopLoss = 0;
-    takeProfit = 0;
-    profit = 0;
-    loss = 0;
   }, []);
-
-  useEffect(() => {
-    if (buyPrice === 0) {
-      stopLoss = 0;
-      takeProfit = 0;
-      profit = 0;
-      loss = 0;
-    }
-    if (orderType === "buy") {
-      stopLoss = round(buyPrice - buyPrice * lossThreshold);
-      takeProfit = round(buyPrice + buyPrice * profitThreshold);
-      profit = round(buyPrice * profitThreshold);
-      loss = round(buyPrice * lossThreshold);
-    }
-    if (orderType === "sell") {
-      stopLoss = round(buyPrice + buyPrice * profitThreshold);
-      takeProfit = round(buyPrice - buyPrice * lossThreshold);
-      profit = round(buyPrice * lossThreshold);
-      loss = round(buyPrice * profitThreshold);
-    }
-    setIsUpdated(true);
-  }, [buyPrice, orderType]);
 
   return (
     <Calculator
       stopLoss={calculateStopLoss(buyPrice, lossThreshold, orderType)}
       takeProfit={calculateTakeProfit(buyPrice, profitThreshold, orderType)}
-      profit={calculateProfit(buyPrice, profitThreshold, orderType)}
-      loss={calculateLoss(buyPrice, lossThreshold, orderType)}
+      profit={calculateProfit(buyPrice, profitThreshold)}
+      loss={calculateLoss(buyPrice, lossThreshold)}
       buyPrice={buyPrice}
       setBuyPrice={setBuyPrice}
       orderType={orderType}
