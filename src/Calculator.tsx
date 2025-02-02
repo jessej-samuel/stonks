@@ -20,9 +20,9 @@ const Calculator = ({
   setOrderType,
 }: CalculatorProps) => {
   return (
-    <div className="h-screen flex justify-center items-center  bg-black text-white">
+    <div className="h-screen flex-col lg:flex justify-center items-center  bg-black text-white">
       <div className="border border-neutral-800 text-primary rounded-sm p-4 flex flex-col gap-4 text-lg">
-        <div className=" rounded-sm p-4 flex gap-4 text-lg w-96 text-center text-secondary-light">
+        <div className=" rounded-sm p-4 flex gap-4 text-lg text-center text-secondary-light">
           <button
             className={`${
               orderType === "buy" ? "bg-primary" : ""
@@ -34,14 +34,14 @@ const Calculator = ({
           <button
             className={`${
               orderType === "sell" ? "bg-primary" : ""
-            } p-2 text-base tracking-wide rounded-sm w-full font-light uppercase flex justify-between`}
+            } p-2 text-base items-center tracking-wide rounded-sm w-full font-light uppercase flex justify-between`}
             onClick={() => setOrderType("sell")}
           >
             <p>Sell</p>
           </button>
         </div>
-        <hr className="border-neutral-800 w-96" />
-        <div className=" text-primary rounded-sm p-4 flex flex-col gap-4 text-lg w-96">
+        <hr className="border-neutral-800" />
+        <div className=" text-primary rounded-sm p-4 flex flex-col gap-4 text-lg">
           <input
             type="number"
             className="bg-neutral-900 border-neutral-800 border px-3 py-1.5 rounded-sm text-text"
