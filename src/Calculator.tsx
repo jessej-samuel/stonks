@@ -34,10 +34,10 @@ const Calculator = ({
           <button
             className={`${
               orderType === "sell" ? "bg-primary" : ""
-            } p-2 text-base items-center tracking-wide rounded-sm w-full font-light uppercase flex justify-between`}
+            } p-2 text-base tracking-wide rounded-sm w-full font-light uppercase`}
             onClick={() => setOrderType("sell")}
           >
-            <p>Sell</p>
+            Sell
           </button>
         </div>
         <hr className="border-neutral-800" />
