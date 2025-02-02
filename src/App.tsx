@@ -1,35 +1,130 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
+import Calculator from "./Calculator";
+
+let stopLoss = 0;
+let takeProfit = 0;
+let profit = 0;
+let loss = 0;
+const lossThreshold = 0.01;
+const profitThreshold = 0.03;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [buyPrice, setBuyPrice] = useState(0);
+  const [orderType, setOrderType] = useState("buy");
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  useEffect(() => {
+    setBuyPrice(0);
+    setOrderType("buy");
+    stopLoss = 0;
+    takeProfit = 0;
+    profit = 0;
+    loss = 0;
+  }, []);
+
+  useEffect(() => {
+    if (buyPrice === 0) {
+      stopLoss = 0;
+      takeProfit = 0;
+      profit = 0;
+      loss = 0;
+    }
+    if (orderType === "buy") {
+      stopLoss = round(buyPrice - buyPrice * lossThreshold);
+      takeProfit = round(buyPrice + buyPrice * profitThreshold);
+      profit = round(buyPrice * profitThreshold);
+      loss = round(buyPrice * lossThreshold);
+    }
+    if (orderType === "sell") {
+      stopLoss = round(buyPrice + buyPrice * profitThreshold);
+      takeProfit = round(buyPrice - buyPrice * lossThreshold);
+      profit = round(buyPrice * lossThreshold);
+      loss = round(buyPrice * profitThreshold);
+    }
+    setIsUpdated(true);
+  }, [buyPrice, orderType]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Calculator
+      stopLoss={calculateStopLoss(buyPrice, lossThreshold, orderType)}
+      takeProfit={calculateTakeProfit(buyPrice, profitThreshold, orderType)}
+      profit={calculateProfit(buyPrice, profitThreshold, orderType)}
+      loss={calculateLoss(buyPrice, lossThreshold, orderType)}
+      buyPrice={buyPrice}
+      setBuyPrice={setBuyPrice}
+      orderType={orderType}
+      setOrderType={setOrderType}
+    />
+  );
 }
 
-export default App
+const calculateStopLoss = (
+  buyPrice: number,
+  percent: number,
+  orderType: string
+) => {
+  if (orderType === "buy") return round(buyPrice - buyPrice * percent);
+  if (orderType === "sell") return round(buyPrice + buyPrice * percent);
+  return 0; // default
+};
+
+const calculateTakeProfit = (
+  buyPrice: number,
+  percent: number,
+  orderType: string
+) => {
+  if (orderType === "buy") return round(buyPrice + buyPrice * percent);
+  if (orderType === "sell") return round(buyPrice - buyPrice * percent);
+  return 0; // default
+};
+
+const calculateProfit = (buyPrice: number, percent: number) => {
+  return round(buyPrice * percent);
+};
+
+const calculateLoss = (buyPrice: number, percent: number) => {
+  return round(buyPrice * percent);
+};
+
+// type handleBuyPriceChangeEventType = {
+//   target: {
+//     value: string;
+//   };
+// };
+// const handleBuyPriceChange = (
+//   e: handleBuyPriceChangeEventType,
+//   orderType: string
+// ) => {
+
+//   if (e.target.value.startsWith("0")) {
+//     e.target.value = e.target.value.slice(1);
+//   }
+
+//   const buyPrice = parseFloat(e.target.value);
+//   if (orderType === "buy") {
+//     stopLoss = calculateStopLoss(buyPrice, lossThreshold);
+//     takeProfit = calculateTakeProfit(buyPrice, profitThreshold);
+//     profit = round(buyPrice * profitThreshold);
+//     loss = round(buyPrice * lossThreshold);
+//   }
+//   if (orderType === "sell") {
+//     stopLoss = calculateStopLoss(buyPrice, profitThreshold);
+//     takeProfit = calculateTakeProfit(buyPrice, lossThreshold);
+//     profit = round(buyPrice * lossThreshold);
+//     loss = round(buyPrice * profitThreshold);
+//   }
+// };
+
+// const calculateStopLoss = (buyPrice: number, percent: number) => {
+//   return round(buyPrice - buyPrice * percent);
+// };
+
+// const calculateTakeProfit = (buyPrice: number, percent: number) => {
+//   return round(buyPrice + buyPrice * percent);
+// };
+
+const round = (value: number) => {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+};
+export default App;
